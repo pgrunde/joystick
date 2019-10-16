@@ -1,0 +1,26 @@
+{
+  "name": "joystick",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "dependencies": {
+    "@types/gsap": "^1.20.2",
+    "gsap": "^2.1.2"
+  },
+  "devDependencies": {
+    "typescript": "^3.6.4"
+  },
+  "scripts": {
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pgrunde/joystick.git"
+  },
+  "author": "pgrunde",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pgrunde/joystick/issues"
+  },
+  "homepage": "https://github.com/pgrunde/joystick#readme"
+}

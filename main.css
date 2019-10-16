@@ -32,3 +32,11 @@ body {
   width: 70px;
   border-radius: 50%;
 }
+
+.base {
+  position: relative;
+  border-radius: 50%;
+  width: 150px;
+  height: 150px;
+  border: 2px solid black;
+}

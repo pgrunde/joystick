@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "declaration": false,
+    "emitDecoratorMetadata": true,
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "lib": ["es2017", "dom"],
+    "module": "esNext",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "strict": true,
+    "noFallthroughCasesInSwitch": true,
+    "target": "es5",
+    "jsx": "react",
+    "noEmit": true,
+    "suppressImplicitAnyIndexErrors": true
+  },
+  "exclude": [
+    "**/*.spec.ts",
+    "node_modules",
+    "vendor",
+    "public",
+    "tmp"
+  ],
+  "compileOnSave": false
+}
+
