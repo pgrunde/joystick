@@ -1,6 +1,4 @@
-"use strict";
-exports.__esModule = true;
-var gsap_1 = require("gsap");
+import { TweenMax } from 'gsap';
 var Joystick = /** @class */ (function () {
     function Joystick() {
         this.centerY = 0;
@@ -8,7 +6,7 @@ var Joystick = /** @class */ (function () {
         this.pointerY = 0;
         this.pointerX = 0;
         this.padDown = false;
-        gsap_1.TweenMax.selector = document.querySelectorAll;
+        TweenMax.selector = document.querySelectorAll;
         var pad = document.getElementById("pad");
         if (pad) {
             var padCoords = this.getCoords(pad);
@@ -21,7 +19,7 @@ var Joystick = /** @class */ (function () {
     }
     Joystick.prototype.mouseUp = function () {
         this.padDown = false;
-        gsap_1.TweenMax.to("#pad", 0.50, { left: 0, bottom: 0 });
+        TweenMax.to("#pad", 0.50, { left: 0, bottom: 0 });
     };
     Joystick.prototype.padMouseDown = function (event) {
         this.padDown = true;
@@ -30,7 +28,7 @@ var Joystick = /** @class */ (function () {
         if (this.padDown) {
             var left = this.pointerX - this.centerX;
             var bottom = this.centerY - this.pointerY;
-            gsap_1.TweenMax.to("#pad", 0.25, { left: left, bottom: bottom });
+            TweenMax.to("#pad", 0.25, { left: left, bottom: bottom });
         }
     };
     Joystick.prototype.handleMouseMove = function (event) {
@@ -60,7 +58,7 @@ var Joystick = /** @class */ (function () {
             top: box.top,
             width: box.width,
             doctop: box.top + pageYOffset,
-            docleft: box.left + pageXOffset
+            docleft: box.left + pageXOffset,
         };
     };
     return Joystick;
@@ -69,3 +67,4 @@ document.onload = function () {
     console.log("happen");
     new Joystick();
 };
+//# sourceMappingURL=main.js.map

@@ -5,15 +5,15 @@
     "esModuleInterop": true,
     "experimentalDecorators": true,
     "lib": ["es2017", "dom"],
-    "module": "esNext",
     "moduleResolution": "node",
     "sourceMap": true,
     "strict": true,
     "noFallthroughCasesInSwitch": true,
+    "module": "esNext",
     "target": "es5",
-    "jsx": "react",
-    "noEmit": true,
-    "suppressImplicitAnyIndexErrors": true
+    "suppressImplicitAnyIndexErrors": true,
+    "outDir": "./dist",
+    "allowJs": true
   },
   "exclude": [
     "**/*.spec.ts",
