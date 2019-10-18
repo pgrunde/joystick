@@ -29,27 +29,29 @@ class Joystick {
         document.onmousemove = this.handleMouseMove;
 
         pad.onmousedown = this.padMouseDown;
+
+        setInterval(this.mouseMoved, 120);
     }
   }
 
-  mouseUp() {
+  mouseUp = () => {
     this.padDown = false;
     TweenMax.to("#pad", 0.50, {left: 0, bottom: 0 })
   }
 
-  padMouseDown(event: any) {
+  padMouseDown = (event: any) => {
     this.padDown = true;
   }
 
-  mouseMoved() {
+  mouseMoved = () => {
     if (this.padDown) {
-      var left = this.pointerX - this.centerX;
-      var bottom = this.centerY - this.pointerY;
-      TweenMax.to("#pad", 0.25, {left: left, bottom: bottom })
+      const left = this.pointerX - this.centerX;
+      const bottom = this.centerY - this.pointerY;
+      TweenMax.to("#pad", 0.15, {left: left, bottom: bottom })
     }
   }
 
-  handleMouseMove(event: any) {
+  handleMouseMove = (event: any) => {
     let eventDoc, doc, body, pageX, pageY;
 
     event = event || window.event;
@@ -71,7 +73,7 @@ class Joystick {
   }
 
   getCoords(elem: HTMLElement): box {
-    var box = elem.getBoundingClientRect()
+    let box = elem.getBoundingClientRect()
     return {
       bottom: box.bottom,
       height: box.height,
@@ -85,7 +87,6 @@ class Joystick {
   }
 }
 
-document.onload = () => {
-  console.log("happen")
+window.onload = () => {
   new Joystick()
 }
