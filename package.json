@@ -17,6 +17,24 @@
     "test": "npm test",
     "build": "webpack --config webpack.config.js"
   },
+  "nodemonConfig": {
+    "ignore": [
+      ".git",
+      "dist/**",
+      "main.js",
+      "node_modules/**/node_modules"
+    ],
+    "verbose": true,
+    "delay": "2500",
+    "execMap": {
+      "js": "npm run build",
+      "css": "npm run build"
+    },
+    "watch": [
+      "main.ts"
+    ]
+  },
+
   "repository": {
     "type": "git",
     "url": "git+https://github.com/pgrunde/joystick.git"
