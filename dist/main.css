@@ -9,9 +9,14 @@ body {
 }
 
 .container {
+  display: flex;
+  height: 250px;
+  width: 250px;
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: center;
+  align-items: center;
+  border: 1px solid brown;
 }
 
 .pad-rim {
