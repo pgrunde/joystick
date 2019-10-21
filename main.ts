@@ -11,8 +11,11 @@ class Joystick {
   pointerY: number
   pointerX: number
   padDown: boolean
+  container: box
 
   constructor() {
+    const container = document.getElementById("container")
+    this.container = this.getCoords(container || document.createElement("error"))
     this.centerY = 0
     this.centerX = 0
     this.pointerY = 0
@@ -23,14 +26,14 @@ class Joystick {
     const pad = document.getElementById("pad")
     if (pad) {
       const padCoords = this.getCoords(pad)
-        this.centerY = padCoords.top + (padCoords.height / 2);
-        this.centerX =  padCoords.left + (padCoords.width / 2);
-        document.onmouseup = this.mouseUp;
-        document.onmousemove = this.handleMouseMove;
+      this.centerY = padCoords.top + (padCoords.height / 2);
+      this.centerX =  padCoords.left + (padCoords.width / 2);
+      document.onmouseup = this.mouseUp;
+      document.onmousemove = this.handleMouseMove;
 
-        pad.onmousedown = this.padMouseDown;
+      pad.onmousedown = this.padMouseDown;
 
-        setInterval(this.mouseMoved, 120);
+      setInterval(this.mouseMoved, 120);
     }
   }
 
@@ -45,8 +48,22 @@ class Joystick {
 
   mouseMoved = () => {
     if (this.padDown) {
-      const left = this.pointerX - this.centerX;
-      const bottom = this.centerY - this.pointerY;
+      let left = this.pointerX - this.centerX;
+      if (this.pointerX < this.container.left) {
+        left = this.container.width / -2
+      }
+      if (this.pointerX > this.container.right) {
+        left = this.container.width / 2
+      }
+
+      let bottom = this.centerY - this.pointerY;
+      if (this.pointerY < this.container.top) {
+        bottom = this.container.height / 2
+      }
+      if (this.pointerY > this.container.bottom) {
+        bottom = this.container.height / -2
+      }
+
       TweenMax.to("#pad", 0.15, {left: left, bottom: bottom })
     }
   }
@@ -84,6 +101,10 @@ class Joystick {
       doctop: box.top + pageYOffset,
       docleft: box.left + pageXOffset,
     } as box
+  }
+
+  currentPadCoords = (): box => {
+    return this.getCoords(document.getElementById("pad") || document.createElement("error"))
   }
 }
 
