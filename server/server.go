@@ -4,11 +4,14 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+
+	"github.com/pgrunde/joystick/templating"
 )
 
 type App struct {
-	mux  *http.ServeMux
-	port int16
+	mux       *http.ServeMux
+	templates *templating.Templates
+	port      int16
 }
 
 func (a *App) ListenAndServe() error {
@@ -26,8 +29,16 @@ func (a *App) ListenAndServe() error {
 
 func New() *App {
 	port := int16(3000)
-	return &App{
-		port: port,
-		mux:  http.NewServeMux(),
+	locals := templating.Attrs{}
+	app := App{
+		port:      port,
+		mux:       http.NewServeMux(),
+		templates: templating.TemplatesFromDir("./templating/templates", locals),
 	}
+	app.mux.HandleFunc(root, app.root)
+	return &app
+}
+
+func (a *App) root(r http.Request, w *http.ResponseWriter) {
+	a.templates.Execute(w, "joystick")
 }
