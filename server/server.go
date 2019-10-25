@@ -35,10 +35,10 @@ func New() *App {
 		mux:       http.NewServeMux(),
 		templates: templating.TemplatesFromDir("./templating/templates", locals),
 	}
-	app.mux.HandleFunc(root, app.root)
+	app.mux.HandleFunc("/", app.root)
 	return &app
 }
 
-func (a *App) root(r http.Request, w *http.ResponseWriter) {
+func (a *App) root(w http.ResponseWriter, r *http.Request) {
 	a.templates.Execute(w, "joystick")
 }
