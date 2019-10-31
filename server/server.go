@@ -19,7 +19,6 @@ type App struct {
 func (a *App) ListenAndServe() error {
 	fileServer := http.FileServer(http.Dir("./dist"))
 	a.mux.Handle("/dist/", http.StripPrefix("/dist/", fileServer))
-	a.mux.HandleFunc("/ws", app.joystickSocket)
 	log.Printf(
 		"Starting server on port '%d'",
 		a.port,
@@ -33,14 +32,15 @@ func (a *App) ListenAndServe() error {
 func New() *App {
 	port := int16(3000)
 	locals := templating.Attrs{}
-	app := App{
+	a := App{
 		mux:       http.NewServeMux(),
 		templates: templating.TemplatesFromDir("./templating/templates", locals),
 		upgrader:  websocket.Upgrader{ReadBufferSize: 1024, WriteBufferSize: 1024},
 		port:      port,
 	}
-	app.mux.HandleFunc("/", app.root)
-	return &app
+	a.mux.HandleFunc("/", a.root)
+	a.mux.HandleFunc("/ws", a.joystickSocket)
+	return &a
 }
 
 func (a *App) root(w http.ResponseWriter, r *http.Request) {
@@ -49,12 +49,17 @@ func (a *App) root(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) joystickSocket(w http.ResponseWriter, r *http.Request) {
 	// TODO check CORS if you ever open to actual internet
-	upgrader.CheckOrigin = func(r *http.Request) bool { return true }
-	wsConn, err := upgrader.Upgrade(w, r, nil)
+	a.upgrader.CheckOrigin = func(r *http.Request) bool { return true }
+	wsConn, err := a.upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println(err)
 	}
-	reader(ws)
+
+	err = wsConn.WriteMessage(1, []byte("Connected!"))
+	if err != nil {
+		log.Println(err)
+	}
+	reader(wsConn)
 }
 
 // https://tutorialedge.net/golang/go-websocket-tutorial/

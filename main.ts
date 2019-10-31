@@ -12,6 +12,7 @@ class Joystick {
   pointerX: number
   padDown: boolean
   container: box
+  socket: WebSocket
 
   constructor() {
     const container = document.getElementById("container")
@@ -21,34 +22,50 @@ class Joystick {
     this.pointerY = 0
     this.pointerX = 0
     this.padDown = false
+    this.socket = new WebSocket("ws://127.0.0.1:3000/ws")
+    console.log("SOCKET CALL", this.socket)
+
+    this.socket.onopen = () => {
+      console.log("Successfully Connected")
+      this.socket.send("Hi From the Client!")
+    }
+
+    this.socket.onclose = event => {
+      console.log("Socket Closed Connection: ", event)
+      this.socket.send("Client Closed!")
+    }
+
+    this.socket.onerror = error => {
+      console.log("Socket Error: ", error)
+    }
 
     TweenMax.selector = document.querySelectorAll
     const pad = document.getElementById("pad")
     if (pad) {
       const padCoords = this.getCoords(pad)
-      this.centerY = padCoords.top + (padCoords.height / 2);
-      this.centerX =  padCoords.left + (padCoords.width / 2);
-      document.onmouseup = this.mouseUp;
-      document.onmousemove = this.handleMouseMove;
+      this.centerY = padCoords.top + (padCoords.height / 2)
+      this.centerX =  padCoords.left + (padCoords.width / 2)
+      document.onmouseup = this.mouseUp
+      document.onmousemove = this.handleMouseMove
 
-      pad.onmousedown = this.padMouseDown;
+      pad.onmousedown = this.padMouseDown
 
-      setInterval(this.mouseMoved, 120);
+      setInterval(this.mouseMoved, 120)
     }
   }
 
   mouseUp = () => {
-    this.padDown = false;
+    this.padDown = false
     TweenMax.to("#pad", 0.50, {left: 0, bottom: 0 })
   }
 
   padMouseDown = (event: any) => {
-    this.padDown = true;
+    this.padDown = true
   }
 
   mouseMoved = () => {
     if (this.padDown) {
-      let left = this.pointerX - this.centerX;
+      let left = this.pointerX - this.centerX
       if (this.pointerX < this.container.left) {
         left = this.container.width / -2
       }
@@ -56,7 +73,7 @@ class Joystick {
         left = this.container.width / 2
       }
 
-      let bottom = this.centerY - this.pointerY;
+      let bottom = this.centerY - this.pointerY
       if (this.pointerY < this.container.top) {
         bottom = this.container.height / 2
       }
@@ -69,24 +86,24 @@ class Joystick {
   }
 
   handleMouseMove = (event: any) => {
-    let eventDoc, doc, body, pageX, pageY;
+    let eventDoc, doc, body, pageX, pageY
 
-    event = event || window.event;
+    event = event || window.event
 
     if (event && event.pageX == null && event.clientX != null) {
-        eventDoc = (event.target && event.target.ownerDocument) || document;
-        doc = eventDoc.documentElement;
-        body = eventDoc.body;
+        eventDoc = (event.target && event.target.ownerDocument) || document
+        doc = eventDoc.documentElement
+        body = eventDoc.body
 
         event.pageX = event.clientX +
           (doc && doc.scrollLeft || body && body.scrollLeft || 0) -
-          (doc && doc.clientLeft || body && body.clientLeft || 0);
+          (doc && doc.clientLeft || body && body.clientLeft || 0)
         event.pageY = event.clientY +
           (doc && doc.scrollTop  || body && body.scrollTop  || 0) -
-          (doc && doc.clientTop  || body && body.clientTop  || 0 );
+          (doc && doc.clientTop  || body && body.clientTop  || 0 )
     }
-    this.pointerX = event.pageX;
-    this.pointerY = event.pageY;
+    this.pointerX = event.pageX
+    this.pointerY = event.pageY
   }
 
   getCoords(elem: HTMLElement): box {
