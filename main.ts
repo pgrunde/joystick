@@ -25,19 +25,9 @@ class Joystick {
     this.socket = new WebSocket("ws://127.0.0.1:3000/ws")
     console.log("SOCKET CALL", this.socket)
 
-    this.socket.onopen = () => {
-      console.log("Successfully Connected")
-      this.socket.send("Hi From the Client!")
-    }
-
-    this.socket.onclose = event => {
-      console.log("Socket Closed Connection: ", event)
-      this.socket.send("Client Closed!")
-    }
-
-    this.socket.onerror = error => {
-      console.log("Socket Error: ", error)
-    }
+    this.socket.onopen = this.socketOnOpen
+    this.socket.onclose = this.socketOnClose
+    this.socket.onerror = this.socketOnError
 
     TweenMax.selector = document.querySelectorAll
     const pad = document.getElementById("pad")
@@ -52,6 +42,20 @@ class Joystick {
 
       setInterval(this.mouseMoved, 120)
     }
+  }
+
+  socketOnOpen = () => {
+    console.log("Successfully Connected")
+    this.socket.send("Hi From the Client!")
+  }
+
+  socketOnClose = (event: Event) => {
+    console.log("Socket Closed Connection: ", event)
+    this.socket.send("Client Closed!")
+  }
+
+  socketOnError = (error: Event) => {
+    console.log("Socket Error: ", error)
   }
 
   mouseUp = () => {
@@ -80,6 +84,8 @@ class Joystick {
       if (this.pointerY > this.container.bottom) {
         bottom = this.container.height / -2
       }
+
+      this.socket.send(`left: ${left}, bottom: ${bottom}`)
 
       TweenMax.to("#pad", 0.15, {left: left, bottom: bottom })
     }
