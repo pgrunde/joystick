@@ -45,12 +45,10 @@ class Joystick {
 
   socketOnOpen = () => {
     console.log("Successfully Connected")
-    this.socket.send("Hi From the Client!")
   }
 
   socketOnClose = (event: Event) => {
     console.log("Socket Closed Connection: ", event)
-    this.socket.send("Client Closed!")
   }
 
   socketOnError = (error: Event) => {
@@ -87,7 +85,7 @@ class Joystick {
       const angleLeft = translateAngle(left)
       const angleBottom = translateAngle(bottom)
 
-      this.socket.send(`left: ${angleLeft}, bottom: ${angleBottom}`)
+      this.socket.send(`${angleLeft} ${angleBottom}`)
 
       TweenMax.to("#pad", 0.15, {left: left, bottom: bottom })
     }
@@ -134,11 +132,11 @@ class Joystick {
   }
 }
 
-function translateAngle(i: number): number {
+function translateAngle(i: number): string {
   // the client range is -126,126
   const clientRange = (126 - (-126))
   const servoRange = (180-0)
-  return (((i - -126) * servoRange) / clientRange) + 0
+  return ((((i - -126) * servoRange) / clientRange) + 0).toFixed(0)
 }
 
 window.onload = () => {

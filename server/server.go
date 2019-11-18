@@ -2,8 +2,11 @@ package server
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
+	"os/exec"
+	"strings"
 
 	"github.com/gorilla/websocket"
 	"github.com/pgrunde/joystick/templating"
@@ -70,10 +73,39 @@ func reader(conn *websocket.Conn) {
 			log.Println(err)
 			return
 		}
-		fmt.Println(string(p))
+
+		parts := strings.Split(string(p), " ")
+		runServo(parts[0], parts[1])
+
 		if err := conn.WriteMessage(messageType, p); err != nil {
 			log.Println(err)
 			return
 		}
 	}
+}
+
+func runServo(angle1, angle2 string) {
+	// angle1, err := strconv.Atoi(parts[0])
+	// angle2, err := strconv.Atoi(parts[1])
+	// if err != nil {
+	// 	log.Println(err)
+	// 	return
+	// }
+	cmd := exec.Command("python3", "servotest.py", angle1, angle2)
+	stdout, err := cmd.StdoutPipe()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer stdout.Close()
+	if err := cmd.Start(); err != nil {
+		log.Fatal(err)
+	}
+	resp, err := ioutil.ReadAll(stdout)
+	if err != nil {
+		log.Fatal(err)
+	}
+	if err := cmd.Wait(); err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(string(resp))
 }
