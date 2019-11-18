@@ -23,7 +23,6 @@ class Joystick {
     this.pointerX = 0
     this.padDown = false
     this.socket = new WebSocket("ws://127.0.0.1:3000/ws")
-    console.log("SOCKET CALL", this.socket)
 
     this.socket.onopen = this.socketOnOpen
     this.socket.onclose = this.socketOnClose
@@ -40,7 +39,7 @@ class Joystick {
 
       pad.onmousedown = this.padMouseDown
 
-      setInterval(this.mouseMoved, 120)
+      setInterval(this.mouseMoved, 500)
     }
   }
 
@@ -85,7 +84,10 @@ class Joystick {
         bottom = this.container.height / -2
       }
 
-      this.socket.send(`left: ${left}, bottom: ${bottom}`)
+      const angleLeft = translateAngle(left)
+      const angleBottom = translateAngle(bottom)
+
+      this.socket.send(`left: ${angleLeft}, bottom: ${angleBottom}`)
 
       TweenMax.to("#pad", 0.15, {left: left, bottom: bottom })
     }
@@ -126,9 +128,17 @@ class Joystick {
     } as box
   }
 
+
   currentPadCoords = (): box => {
     return this.getCoords(document.getElementById("pad") || document.createElement("error"))
   }
+}
+
+function translateAngle(i: number): number {
+  // the client range is -126,126
+  const clientRange = (126 - (-126))
+  const servoRange = (180-0)
+  return (((i - -126) * servoRange) / clientRange) + 0
 }
 
 window.onload = () => {
