@@ -39,7 +39,7 @@ class Joystick {
 
       pad.onmousedown = this.padMouseDown
 
-      setInterval(this.mouseMoved, 500)
+      setInterval(this.mouseMoved, 120)
     }
   }
 
