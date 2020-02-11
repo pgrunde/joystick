@@ -22,7 +22,7 @@ class Joystick {
     this.pointerY = 0
     this.pointerX = 0
     this.padDown = false
-    this.socket = new WebSocket("ws://127.0.0.1:3000/ws")
+    this.socket = new WebSocket("ws://192.168.0.24:3000/ws")
 
     this.socket.onopen = this.socketOnOpen
     this.socket.onclose = this.socketOnClose
@@ -39,7 +39,7 @@ class Joystick {
 
       pad.onmousedown = this.padMouseDown
 
-      setInterval(this.mouseMoved, 120)
+      setInterval(this.mouseMoved, 20)
     }
   }
 

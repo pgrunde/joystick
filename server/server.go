@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/gorilla/websocket"
@@ -60,12 +61,13 @@ func New() *App {
 	d := i2c.NewPCA9685Driver(r)
 
 	return &App{
-		mux:       http.NewServeMux(),
-		templates: templating.TemplatesFromDir("./templating/templates", locals),
-		upgrader:  websocket.Upgrader{ReadBufferSize: 1024, WriteBufferSize: 1024},
-		port:      port,
-		device:    d,
-		adaptor:   r,
+		mux:          http.NewServeMux(),
+		templates:    templating.TemplatesFromDir("./templating/templates", locals),
+		upgrader:     websocket.Upgrader{ReadBufferSize: 1024, WriteBufferSize: 1024},
+		port:         port,
+		servoChannel: make(chan string),
+		device:       d,
+		adaptor:      r,
 	}
 }
 
@@ -77,8 +79,18 @@ func (a *App) work() {
 	for {
 		msg := <-a.servoChannel
 		parts := strings.Split(msg, " ")
-		fmt.Println(parts)
-		// a.device.ServoWrite("1", byte(50))
+		angle1, err := strconv.Atoi(parts[0])
+		angle2, err := strconv.Atoi(parts[1])
+		if err != nil {
+			fmt.Println("error getting angle from parts:", err)
+			return
+		}
+		if angle1 >= 0 && angle1 <= 180 {
+			a.device.ServoWrite("0", byte(angle1))
+		}
+		if angle2 >= 0 && angle2 <= 280 {
+			a.device.ServoWrite("1", byte(angle2))
+		}
 	}
 }
 
