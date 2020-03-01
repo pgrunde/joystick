@@ -34,10 +34,16 @@ class Joystick {
       const padCoords = this.getCoords(pad)
       this.centerY = padCoords.top + (padCoords.height / 2)
       this.centerX =  padCoords.left + (padCoords.width / 2)
-      document.onmouseup = this.mouseUp
-      document.onmousemove = this.handleMouseMove
 
-      pad.onmousedown = this.padMouseDown
+      if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+        document.ontouchstart = this.mouseUp
+        pad.ontouchend = this.padMouseDown
+        document.ontouchmove = this.handleMouseMove
+      } else {
+        document.onmouseup = this.mouseUp
+        pad.onmousedown = this.padMouseDown
+        document.onmousemove = this.handleMouseMove
+      }
 
       setInterval(this.mouseMoved, 20)
     }
