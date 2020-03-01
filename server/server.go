@@ -57,8 +57,8 @@ func New() *App {
 	port := int16(3000)
 	locals := templating.Attrs{}
 
-	r := raspi.NewAdaptor()
-	d := i2c.NewPCA9685Driver(r)
+	adaptor := raspi.NewAdaptor()
+	device := i2c.NewPCA9685Driver(adaptor)
 
 	return &App{
 		mux:          http.NewServeMux(),
@@ -66,8 +66,8 @@ func New() *App {
 		upgrader:     websocket.Upgrader{ReadBufferSize: 1024, WriteBufferSize: 1024},
 		port:         port,
 		servoChannel: make(chan string),
-		device:       d,
-		adaptor:      r,
+		device:       device,
+		adaptor:      adaptor,
 	}
 }
 
@@ -79,17 +79,17 @@ func (a *App) work() {
 	for {
 		msg := <-a.servoChannel
 		parts := strings.Split(msg, " ")
-		angle1, err := strconv.Atoi(parts[0])
-		angle2, err := strconv.Atoi(parts[1])
+		angleX, err := strconv.Atoi(parts[0])
+		angleY, err := strconv.Atoi(parts[1])
 		if err != nil {
 			fmt.Println("error getting angle from parts:", err)
 			return
 		}
-		if angle1 >= 0 && angle1 <= 180 {
-			a.device.ServoWrite("0", byte(angle1))
+		if angleX >= 0 && angleX <= 180 {
+			a.device.ServoWrite("0", byte(angleX))
 		}
-		if angle2 >= 0 && angle2 <= 280 {
-			a.device.ServoWrite("1", byte(angle2))
+		if angleY >= 0 && angleY <= 180 {
+			a.device.ServoWrite("1", byte(angleY))
 		}
 	}
 }
